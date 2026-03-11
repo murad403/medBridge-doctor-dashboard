@@ -2,21 +2,21 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
-import { Plus, Search, Pencil, Trash2 } from "lucide-react";
+import { Plus, Search, Pencil, Trash2, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import DeleteArticleModal from "@/components/modal/DeleteArticleModal";
 import { Article, dummyArticles } from "@/lib/demo";
+import Image from "next/image";
 
 
 
 
 export default function NewsManagementPage() {
   const [search, setSearch] = useState("");
-  const [activeTab, setActiveTab] = useState("all");
+  const [activeTab, setActiveTab] = useState("all articles");
   const [articles, setArticles] = useState<Article[]>(dummyArticles);
   const [deleteModal, setDeleteModal] = useState<{
     open: boolean;
@@ -73,35 +73,34 @@ export default function NewsManagementPage() {
 
       {/* Filters */}
       <div className="mb-6 flex items-center gap-4 flex-col md:flex-row">
-        
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-gray-400" />
-            <Input
-              placeholder="Search articles..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 py-3"
-            />
-          </div>
 
-          <div className="flex items-center gap-2">
-            {
-              ["all articles", "published"].map((tab) => (
-                <button
-                  key={tab}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
-                    activeTab === tab
-                      ? "bg-linear-to-r from-button-start via-button-end to-button-start text-white"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+        <div className="relative w-full md:w-96">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-gray-400" />
+          <Input
+            placeholder="Search articles..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-9 py-3"
+          />
+        </div>
+
+        <div className="flex items-center gap-2">
+          {
+            ["all articles", "published"].map((tab) => (
+              <button
+                key={tab}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${activeTab === tab
+                  ? "bg-linear-to-r from-button-start via-button-end to-button-start text-white"
+                  : "bg-[#F1F5F9] text-gray-700 hover:bg-[#F1F5F9]/80"
                   }`}
-                  onClick={() => setActiveTab(tab)}
-                >
-                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                </button>
-              ))
+                onClick={() => setActiveTab(tab)}
+              >
+                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              </button>
+            ))
 
-            }
-          </div>
+          }
+        </div>
       </div>
 
       {/* Articles Table */}
@@ -109,12 +108,12 @@ export default function NewsManagementPage() {
         <Table>
           <TableHeader>
             <TableRow className="bg-gray-50">
-              <TableHead className="font-medium text-description">Article</TableHead>
-              <TableHead className="font-medium text-description">Status</TableHead>
-              <TableHead className="font-medium text-description">Author</TableHead>
-              <TableHead className="font-medium text-description">Date</TableHead>
-              <TableHead className="font-medium text-description">Views</TableHead>
-              <TableHead className="font-medium text-description text-right">
+              <TableHead className="font-semibold text-description">Article</TableHead>
+              <TableHead className="font-semibold text-description">Status</TableHead>
+              <TableHead className="font-semibold text-description">Author</TableHead>
+              <TableHead className="font-semibold text-description">Date</TableHead>
+              <TableHead className="font-semibold text-description">Views</TableHead>
+              <TableHead className="font-semibold text-description text-right">
                 Actions
               </TableHead>
             </TableRow>
@@ -132,10 +131,16 @@ export default function NewsManagementPage() {
             ) : (
               filteredArticles.map((article) => (
                 <TableRow key={article.id} className="hover:bg-gray-50">
-                  <TableCell>
-                    <p className="font-medium text-title line-clamp-1 max-w-xs">
-                      {article.title}
-                    </p>
+                  <TableCell className="flex items-center gap-3">
+                    <Image src={article.image} alt={article.title} className="size-16 rounded-lg object-cover" />
+                    <div>
+                      <p className="font-medium text-title line-clamp-1 text-base max-w-xs">
+                        {article.title}
+                      </p>
+                      <p className="text-description text-sm mt-1">
+                        {article.description}
+                      </p>
+                    </div>
                   </TableCell>
                   <TableCell>
                     <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
@@ -149,24 +154,25 @@ export default function NewsManagementPage() {
                     {format(new Date(article.publishDate), "MMM dd, yyyy")}
                   </TableCell>
                   <TableCell className="text-description">
-                    {article.views.toLocaleString()}
+                    <div className="flex items-center gap-1.5">
+                      <Eye size={15} />
+                      {article.views.toLocaleString()}
+                    </div>
                   </TableCell>
-                  
+
                   <TableCell>
-                    <div className="flex items-center justify-end gap-1">
+                    <div className="flex items-center justify-end gap-2">
                       <Link href={`/news-management/edit-article?id=${article.id}`}>
-                        <Button variant="ghost" size="icon" className="size-8">
-                          <Pencil className="size-4 text-gray-500" />
-                        </Button>
+
+                        <Pencil className="text-description" size={14} />
+
                       </Link>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="size-8"
+                      <button
+                      className="cursor-pointer"
                         onClick={() => handleDelete(article)}
                       >
                         <Trash2 className="size-4 text-red-500" />
-                      </Button>
+                      </button>
                     </div>
                   </TableCell>
                 </TableRow>

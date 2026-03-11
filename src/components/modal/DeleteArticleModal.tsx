@@ -1,13 +1,5 @@
 "use client";
-
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 
@@ -26,7 +18,7 @@ export default function DeleteArticleModal({
 }: DeleteArticleModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md" showCloseButton={false}>
         <DialogHeader>
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100 mb-2">
             <Trash2 className="h-6 w-6 text-red-600" />
@@ -41,15 +33,14 @@ export default function DeleteArticleModal({
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex-row justify-center gap-3 sm:justify-center">
-          <Button
-            variant="outline"
+          <button
             onClick={() => onOpenChange(false)}
-            className="min-w-25"
+            className="w-full border border-gray-400 rounded-lg cursor-pointer hover:bg-gray-100"
           >
             Cancel
-          </Button>
+          </button>
           <Button
-            variant="destructive"
+            
             onClick={() => {
               onConfirm();
               onOpenChange(false);
