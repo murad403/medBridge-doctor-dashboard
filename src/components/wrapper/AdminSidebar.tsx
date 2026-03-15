@@ -35,7 +35,7 @@ export default function AdminSidebar() {
           <Link href="/" className="flex items-center gap-2.5 min-w-0 group-data-[collapsible=icon]:justify-center">
             <Image src={logo} alt="TuacasaAqui" width={40} height={40} className="shrink-0 group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:h-8" />
             <span className="text-lg font-bold text-[#1b3a5c] truncate group-data-[collapsible=icon]:hidden">
-              TeuEmpregoAqui
+              TuacasaAqui
             </span>
           </Link>
         </div>
