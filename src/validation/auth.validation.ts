@@ -10,7 +10,7 @@ export const forgotPasswordSchema = z.object({
 });
 
 export const verifyOtpSchema = z.object({
-  otp: z.string().length(5, 'Please enter all 5 digits'),
+  otp: z.string().length(6, 'Please enter all 6 digits'),
 });
 
 export const resetPasswordSchema = z.object({

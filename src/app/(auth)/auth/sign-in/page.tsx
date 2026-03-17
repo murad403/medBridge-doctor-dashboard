@@ -13,11 +13,7 @@ import { SignInFormData, signInSchema } from "@/validation/auth.validation";
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<SignInFormData>({
+  const { register, handleSubmit, formState: { errors } } = useForm<SignInFormData>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
       email: "",
@@ -30,7 +26,7 @@ const SignIn = () => {
   };
 
   return (
-    <div className=" w-full flex items-center justify-center">
+    <div className="w-full flex items-center justify-center">
       <div className="w-full max-w-117.5">
         <Link href={"/"} className="flex items-center justify-center gap-2 mb-10">
           <Image src={logo} alt="MedBridge" width={48} height={48} priority />
@@ -105,7 +101,7 @@ const SignIn = () => {
               </Link>
             </div>
 
-            <Button type="submit" className="">
+            <Button type="submit">
               Login
             </Button>
           </form>

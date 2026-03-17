@@ -1,50 +1,56 @@
 "use client";
-
-import { useRef } from "react";
-import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import authBgMain from "@/assets/auth/auth1.png";
-import authBgAccent from "@/assets/auth/auth2.png";
 import { VerifyOtpFormData, verifyOtpSchema } from "@/validation/auth.validation";
+import { useRouter } from "next/navigation";
 
-const OTP_LENGTH = 5;
+const OTP_LENGTH = 6;
 
 const VerifyOtp = () => {
   const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
-
-  const {
-    control,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<VerifyOtpFormData>({
+  const [resendTimer, setResendTimer] = useState(0);
+  const router = useRouter();
+  const { control, handleSubmit, formState: { errors}} = useForm<VerifyOtpFormData>({
     resolver: zodResolver(verifyOtpSchema),
     defaultValues: {
       otp: "",
     },
   });
 
+  useEffect(() => {
+    if (resendTimer <= 0) {
+      return;
+    }
+
+    const timerId = setInterval(() => {
+      setResendTimer((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+
+    return () => clearInterval(timerId);
+  }, [resendTimer]);
+
+  const handleResend = () => {
+    if (resendTimer > 0) {
+      return;
+    }
+
+    // TODO: call resend OTP API here
+    setResendTimer(60);
+  };
+
   const onSubmit: SubmitHandler<VerifyOtpFormData> = async (data) => {
     console.log("Verify OTP payload", data);
+    router.push("/auth/reset-password");
   };
 
   return (
-    <div className="relative w-full min-h-screen overflow-hidden bg-[#F3F4F6] flex items-center justify-center px-4 py-8">
-      <Image
-        src={authBgMain}
-        alt="Decorative background"
-        className="absolute -left-24 -bottom-30 w-130 h-130 object-contain opacity-30 pointer-events-none"
-      />
-      <Image
-        src={authBgAccent}
-        alt="Decorative accent"
-        className="absolute -top-12 -right-8 w-105 h-auto object-contain pointer-events-none"
-      />
-
-      <div className="relative z-10 w-full max-w-95 rounded-2xl border border-[#E5E7EB] bg-white/65 p-5 sm:p-6">
+    <div className="w-full flex items-center justify-center">
+      
+      <div className="w-full max-w-117.5 rounded-xl border border-border-color bg-[#FAFAFA] px-6 py-10 md:p-5">
         <div className="text-center mb-5">
-          <h1 className="text-[48px] leading-13 font-semibold text-[#12141B]">
+          <h1 className="text-2xl md:text-3xl leading-11 font-semibold text-title">
             Verify Email
           </h1>
         </div>
@@ -85,7 +91,7 @@ const VerifyOtp = () => {
                             inputRefs.current[idx - 1]?.focus();
                           }
                         }}
-                        className="size-10 rounded-xl border border-border-color bg-white text-center text-lg font-semibold text-[#0F172A] focus:border-[#2E5BFF] focus:outline-none focus:ring-1 focus:ring-[#2E5BFF]"
+                        className="size-12 rounded-xl border border-border-color bg-white text-center text-lg font-semibold text-[#0F172A] focus:border-title focus:outline-none focus:ring-1 focus:ring-title"
                       />
                     ))}
                   </div>
@@ -97,15 +103,23 @@ const VerifyOtp = () => {
             }}
           />
 
-          <Button type="submit" disabled={isSubmitting} className="mt-2 h-11.25 text-[34px] leading-8.5">
+          <Button type="submit">
             Verify
           </Button>
 
           <p className="text-center text-sm text-[#1F2937]">
             Don&apos;t get the code?{" "}
-            <button type="button" className="font-semibold text-[#2E5BFF] hover:underline">
-              Resend
-            </button>
+            {resendTimer > 0 ? (
+              <span className="font-semibold text-title">{resendTimer}s</span>
+            ) : (
+              <button
+                type="button"
+                onClick={handleResend}
+                className="font-semibold text-[#2E5BFF] hover:underline cursor-pointer"
+              >
+                Resend
+              </button>
+            )}
           </p>
         </form>
       </div>
