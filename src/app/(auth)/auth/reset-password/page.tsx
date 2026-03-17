@@ -1,22 +1,23 @@
 "use client";
 import { useState } from "react";
-import Image from "next/image";
 import { Eye, EyeOff } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import authBgMain from "@/assets/auth/auth1.png";
-import authBgAccent from "@/assets/auth/auth2.png";
 import { ResetPasswordFormData, resetPasswordSchema } from "@/validation/auth.validation";
+import { useRouter } from "next/navigation";
+
+
 
 const ResetPassword = () => {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState({
     newPassword: false,
     confirmPassword: false,
   });
 
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<ResetPasswordFormData>({
+  const { register, handleSubmit, formState: { errors } } = useForm<ResetPasswordFormData>({
     resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
       newPassword: "",
@@ -26,6 +27,7 @@ const ResetPassword = () => {
 
   const onSubmit: SubmitHandler<ResetPasswordFormData> = async (data) => {
     console.log("Reset password payload", data);
+    router.push("/auth/password-reset-success");
   };
 
   return (
